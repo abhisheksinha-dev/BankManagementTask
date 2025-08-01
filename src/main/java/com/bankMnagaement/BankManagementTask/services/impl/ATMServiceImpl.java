@@ -2,11 +2,17 @@ package com.bankMnagaement.BankManagementTask.services.impl;
 
 import com.bankMnagaement.BankManagementTask.dtos.ATMDto;
 import com.bankMnagaement.BankManagementTask.entities.ATM;
+import com.bankMnagaement.BankManagementTask.entities.AppUser;
+import com.bankMnagaement.BankManagementTask.entities.BankAccount;
 import com.bankMnagaement.BankManagementTask.exception.InvalidIdException;
+import com.bankMnagaement.BankManagementTask.exception.ResourceNotFoundException;
 import com.bankMnagaement.BankManagementTask.repositories.ATMRepository;
+import com.bankMnagaement.BankManagementTask.repositories.AppUserRepository;
+import com.bankMnagaement.BankManagementTask.repositories.BankAccountRepository;
 import com.bankMnagaement.BankManagementTask.services.ATMService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +22,8 @@ public class ATMServiceImpl implements ATMService {
 
     private final ATMRepository atmRepository;
     private final ModelMapper modelMapper;
+    private final AppUserRepository appUserRepository;
+    private final BankAccountRepository bankAccountRepository;
 
     @Override
     public String createAtm(ATMDto dto) {
@@ -64,10 +72,19 @@ public class ATMServiceImpl implements ATMService {
 
         ATM atm = atmRepository.findById(atmId).orElseThrow(() -> new InvalidIdException("ID IS WRONG"));
 
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        AppUser currentUser = appUserRepository.findByUsername(username).orElseThrow(()-> new ResourceNotFoundException("No User"));
+
+        BankAccount userAccount = currentUser.getBankAccount();
+        if (userAccount.getBalance() < amount){
+            return "you don't have sufficient balance to withdraw";
+        }
+
         if (amount > atm.getTotalMoney())
             return "INSUFFICIENT FUNDS";
 
         StringBuilder message = new StringBuilder();
+
         double remaining = amount;
 
 //        if (remaining >= 2000 && atm.getCountOf2000Notes()>0)
@@ -133,10 +150,19 @@ public class ATMServiceImpl implements ATMService {
             return "ATM don't has smaller notes";
         }
 
-        atm.setTotalMoney(atm.getCountOf100Notes() * 100 + atm.getCountOf500Notes() * 500 + atm.getCountOf2000Notes() * 2000);
+        double totalMoney =
+                        atm.getCountOf2000Notes() * 2000 +
+                        atm.getCountOf500Notes() * 500 +
+                        atm.getCountOf100Notes() * 100;
+
+        atm.setTotalMoney(totalMoney);
+
+        userAccount.setBalance(userAccount.getBalance() - amount);
+
+        bankAccountRepository.save(userAccount);
         atmRepository.save(atm);
 
-        return "Withdrawn amount breakdown:\n" + message.toString();
+        return "Withdrawn Rs. "+ amount + "Successful ! breakdown:\n" + message.toString();
     }
 
     @Override

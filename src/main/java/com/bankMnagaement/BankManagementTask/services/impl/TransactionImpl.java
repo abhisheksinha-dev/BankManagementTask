@@ -6,6 +6,7 @@ import com.bankMnagaement.BankManagementTask.entities.AppUser;
 import com.bankMnagaement.BankManagementTask.entities.BankAccount;
 import com.bankMnagaement.BankManagementTask.entities.Transaction;
 import com.bankMnagaement.BankManagementTask.enums.TransactionType;
+import com.bankMnagaement.BankManagementTask.exception.ResourceNotFoundException;
 import com.bankMnagaement.BankManagementTask.repositories.AppUserRepository;
 import com.bankMnagaement.BankManagementTask.repositories.BankAccountRepository;
 import com.bankMnagaement.BankManagementTask.repositories.TransactionRepository;
@@ -34,7 +35,7 @@ public class TransactionImpl implements TransactionService {
     public TransactionDto addAmount(double amount) {
 
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        AppUser currentUser = appUserRepository.findByUsername(username).orElseThrow();
+        AppUser currentUser = appUserRepository.findByUsername(username).orElseThrow(()-> new ResourceNotFoundException("No User"));
 
         BankAccount account = bankAccountRepository.findByAccountHolderUsername(username);
 
@@ -59,7 +60,7 @@ public class TransactionImpl implements TransactionService {
     @Override
     public TransactionDto withdrawAmount(double amount) {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        AppUser currentUser = appUserRepository.findByUsername(username).orElseThrow();
+        AppUser currentUser = appUserRepository.findByUsername(username).orElseThrow(()-> new ResourceNotFoundException("No User"));
 
         BankAccount account = bankAccountRepository.findByAccountHolderUsername(username);
 
@@ -85,7 +86,7 @@ public class TransactionImpl implements TransactionService {
     public List<TransactionDto> getTransactions() {
 
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        AppUser currentUser = appUserRepository.findByUsername(username).orElseThrow();
+        AppUser currentUser = appUserRepository.findByUsername(username).orElseThrow(()-> new ResourceNotFoundException("No User"));
 
         List<Transaction> transactions = currentUser.getBankAccount().getTransactions();
 
