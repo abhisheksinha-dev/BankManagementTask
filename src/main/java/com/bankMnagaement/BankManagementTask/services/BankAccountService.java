@@ -5,5 +5,6 @@ import com.bankMnagaement.BankManagementTask.exception.ObjectAlreadyExistExcepti
 
 public interface BankAccountService {
     BankAccDto createBankAccount(BankAccDto dto) throws ObjectAlreadyExistException;
-    public String checkBalance();
+    String checkBalance();
+    String deleteBankAccount(String bankAccountId);
 }

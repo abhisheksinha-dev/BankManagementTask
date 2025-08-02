@@ -28,4 +28,10 @@ public class BankAccountController {
         String totalBalance = bankAccountService.checkBalance();
         return new ResponseEntity<>(totalBalance,HttpStatus.FOUND);
     }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteBankAccount(String bankAccountId){
+        String delete = bankAccountService.deleteBankAccount(bankAccountId);
+        return new ResponseEntity<>(delete,HttpStatus.OK);
+    }
 }

@@ -3,6 +3,7 @@ package com.bankMnagaement.BankManagementTask.services.impl;
 import com.bankMnagaement.BankManagementTask.dtos.BankAccDto;
 import com.bankMnagaement.BankManagementTask.entities.AppUser;
 import com.bankMnagaement.BankManagementTask.entities.BankAccount;
+import com.bankMnagaement.BankManagementTask.exception.InvalidIdException;
 import com.bankMnagaement.BankManagementTask.exception.ObjectAlreadyExistException;
 import com.bankMnagaement.BankManagementTask.exception.ResourceNotFoundException;
 import com.bankMnagaement.BankManagementTask.repositories.AppUserRepository;
@@ -45,5 +46,17 @@ public class BankImpl implements BankAccountService {
         AppUser currentUser = appUserRepository.findByUsername(username).orElseThrow();
 
         return "CURRENT BALANCE : "+ currentUser.getBankAccount().getBalance();
+    }
+
+    @Override
+    public String deleteBankAccount(String bankAccountId) {
+        BankAccount account = bankAccountRepository
+                .findById(bankAccountId)
+                .orElseThrow(()-> new InvalidIdException("Enter correct Id"));
+
+        bankAccountRepository.delete(account);
+        return "Bank Account Successfully deleted of Account Holder" + account
+                .getAccountHolder()
+                .getName();
     }
 }
