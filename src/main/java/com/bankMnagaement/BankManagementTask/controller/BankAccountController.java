@@ -29,8 +29,8 @@ public class BankAccountController {
         return new ResponseEntity<>(totalBalance,HttpStatus.FOUND);
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteBankAccount(String bankAccountId){
+    @DeleteMapping("/delete/{bankAccountId}")
+    public ResponseEntity<String> deleteBankAccount(@PathVariable String bankAccountId){
         String delete = bankAccountService.deleteBankAccount(bankAccountId);
         return new ResponseEntity<>(delete,HttpStatus.OK);
     }
