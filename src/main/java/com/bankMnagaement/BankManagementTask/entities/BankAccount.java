@@ -18,6 +18,8 @@ public class BankAccount {
     @JoinColumn(name = "app_user_id")
     private AppUser accountHolder;
 
+    private String accountHolderName;
+
     private double balance;
 
     @OneToMany(mappedBy = "bankAccount",cascade = CascadeType.ALL)
