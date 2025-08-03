@@ -34,6 +34,7 @@ public class BankImpl implements BankAccountService {
 
         account.setAccountHolder(appUser);
         account.setBalance(dto.getBalance());
+        account.setAccountHolderName(appUser.getName());
         bankAccountRepository.save(account);
 
         appUser.setBankAccount(account);
@@ -55,7 +56,7 @@ public class BankImpl implements BankAccountService {
                 .orElseThrow(()-> new InvalidIdException("Enter correct Id"));
 
         bankAccountRepository.delete(account);
-        return "Bank Account Successfully deleted of Account Holder" + account
+        return "Bank Account Successfully deleted of Account Holder : " + account
                 .getAccountHolder()
                 .getName();
     }
