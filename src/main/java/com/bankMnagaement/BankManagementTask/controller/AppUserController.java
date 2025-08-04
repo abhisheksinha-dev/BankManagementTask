@@ -9,12 +9,11 @@ import com.bankMnagaement.BankManagementTask.services.AppUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import javax.security.auth.login.CredentialNotFoundException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,5 +32,12 @@ public class AppUserController {
     public ResponseEntity<LoginResponse> loginAppUser(@RequestBody LoginRequest request) throws CredentialNotFoundException {
         LoginResponse responseDto = appUserService.loginUsers(request);
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/get-all")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<List<AppUserResponseDto>> getAllUsers(){
+        List<AppUserResponseDto> responseDtoList = appUserService.getAllUsers();
+        return new ResponseEntity<>(responseDtoList,HttpStatus.FOUND);
     }
 }

@@ -30,6 +30,7 @@ public class BankAccountController {
     }
 
     @DeleteMapping("/delete/{bankAccountId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<String> deleteBankAccount(@PathVariable String bankAccountId){
         String delete = bankAccountService.deleteBankAccount(bankAccountId);
         return new ResponseEntity<>(delete,HttpStatus.OK);

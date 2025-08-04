@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.CredentialNotFoundException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -62,5 +63,11 @@ public class AppUserImpl implements AppUserService {
         } else {
             throw new CredentialNotFoundException("Password incorrect, please enter valid password");
         }
+    }
+
+    @Override
+    public List<AppUserResponseDto> getAllUsers() {
+        List<AppUser> appUserList = appUserRepository.findAll();
+        return appUserList.stream().map(appUser -> modelMapper.map(appUser,AppUserResponseDto.class)).toList();
     }
 }
