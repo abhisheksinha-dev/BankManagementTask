@@ -12,6 +12,10 @@ import org.springframework.web.client.RestClient;
 @Configuration
 public class RestClientConfig {
 
+    /**
+     * agar RestClient use karna hai to week-2 me EmployeeDto se validation hta dena hai and
+     * ApiResponse me Date format bhi hta dena hai..@JsonProperty
+     */
     @Value("${employeeService.base.url}")
     private String BASE_URL;
 
